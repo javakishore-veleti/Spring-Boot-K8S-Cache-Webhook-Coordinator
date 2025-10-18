@@ -10,8 +10,12 @@
     "docker:push": "docker push spring-k8s-cache-webhook-coordinator:latest",
     "kubectlnpm:local-deploy": "kubectl apply -k  devops/k8s/overlays/local",
     "kubectl:local-scale-pods": "kubectl scale deployment local-spring-k8s-cache-webhook-coordinator --replicas=5",
-    "kubectl:local-info": "kubectl get pods,service,endpoints",
+    "kubectl:local-info": "kubectl get deployments,pods,service,endpoints",
+    "kubectl:local-svc": "kubectl get svc spring-k8s-cache-webhook-coordinator",
+    "kubectl:local-pods": "kubectl get pods -l app=spring-k8s-cache-webhook-coordinator",
+    "kubectl:local-deployments": "kubectl get deployments",
     "kubectl:local-nodeport": "minikube service local-spring-k8s-cache-webhook-coordinator",
-    "kubectl:local-delete": "kubectl delete -k devops/k8s/overlays/local"
+    "kubectl:local-delete": "kubectl delete -k devops/k8s/overlays/local",
+    "kubectl:local-redeploy": "npm run docker:build && npm run kubectl:local-delete && npm run kubectl:local-deploy"
   }
 }
