@@ -20,11 +20,16 @@ spring:
 
 
 management:
+  endpoint:
+    health:
+      show-details: always
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: "*"
   health:
+    details:
+      enabled: true
     db:
       enabled: true  # Enable database health check
     diskspace:
@@ -33,6 +38,9 @@ management:
     enabled: true
     sampling:
       probability: 1.0
+    exporter:
+      otlp:
+        enabled: true  #REQUIRED for endpoint below to take effect
 
   # Recommended for local learning
   # Keep both YAMLs ready — start simple with Jaeger-only, then move to Collector mode when you want to test routing or batching.
@@ -81,3 +89,7 @@ logging:
     root: INFO
 
 
+otel:
+  java:
+    global-autoconfigure:
+      enabled: true

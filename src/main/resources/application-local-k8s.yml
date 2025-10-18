@@ -3,26 +3,12 @@ spring:
     name: spring-k8s-cache-webhook-coordinator
 
 management:
-  tracing:
-    enabled: true
-    sampling:
-      probability: 1.0
-    exporter:
-      otlp:
-        enabled: true  #REQUIRED for endpoint below to take effect
   otlp:
     tracing:
       endpoint: http://otel-collector.observability.svc.cluster.local:4318/v1/traces
 
 logging:
-  pattern:
-    level: "%5p [${spring.application.name:},trace_id=%X{traceId:-},span_id=%X{spanId:-}]"
   level:
     io.micrometer.tracing: DEBUG
     io.opentelemetry: DEBUG
     io.opentelemetry.exporter: DEBUG
-
-otel:
-  java:
-    global-autoconfigure:
-      enabled: true

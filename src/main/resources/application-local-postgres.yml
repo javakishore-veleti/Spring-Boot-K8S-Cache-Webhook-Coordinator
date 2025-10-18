@@ -16,3 +16,6 @@ spring:
 org.springframework.jdbc.core: DEBUG
 org.hibernate.SQL: DEBUG
 org.springframework.orm.jpa: DEBUG
+
+db:
+  url: local-postgres.observability.svc.cluster.local:5432

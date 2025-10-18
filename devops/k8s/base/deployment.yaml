@@ -15,7 +15,7 @@ spec:
         app: spring-k8s-cache-webhook-coordinator
     spec:
       containers:
-        - name: cache-coordinator
+        - name: microservice-spring-k8s-cache-webhook-coordinator
           image: spring-k8s-cache-webhook-coordinator:latest
           imagePullPolicy: IfNotPresent
           ports:
