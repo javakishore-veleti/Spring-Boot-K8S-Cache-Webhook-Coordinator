@@ -1,0 +1,17 @@
+{
+  "name": "spring-k8s-cache-webhook-coordinator",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "mvn clean install",
+    "docker:build": "docker build -t spring-k8s-cache-webhook-coordinator:latest -f dockerBuild/Dockerfile .",
+    "docker:run": "docker run --name spring-k8s-cache-webhook-coordinator -p 8080:8080 spring-k8s-cache-webhook-coordinator:latest ",
+    "docker:stop": "docker stop spring-k8s-cache-webhook-coordinator",
+    "docker:rm": "docker rm spring-k8s-cache-webhook-coordinator",
+    "docker:push": "docker push spring-k8s-cache-webhook-coordinator:latest",
+    "kubectlnpm:local-deploy": "kubectl apply -k  devops/k8s/overlays/local",
+    "kubectl:local-scale-pods": "kubectl scale deployment local-spring-k8s-cache-webhook-coordinator --replicas=5",
+    "kubectl:local-info": "kubectl get pods,service,endpoints",
+    "kubectl:local-nodeport": "minikube service local-spring-k8s-cache-webhook-coordinator",
+    "kubectl:local-delete": "kubectl delete -k devops/k8s/overlays/local"
+  }
+}

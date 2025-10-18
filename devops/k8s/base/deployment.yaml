@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-k8s-cache-webhook-coordinator
+  labels:
+    app: spring-k8s-cache-webhook-coordinator
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: spring-k8s-cache-webhook-coordinator
+  template:
+    metadata:
+      labels:
+        app: spring-k8s-cache-webhook-coordinator
+    spec:
+      containers:
+        - name: cache-coordinator
+          image: spring-k8s-cache-webhook-coordinator:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "k8s"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
