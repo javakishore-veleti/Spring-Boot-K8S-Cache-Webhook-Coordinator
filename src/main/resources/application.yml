@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: spring-k8s-cache-webhook-coordinator
+  cloud:
+    kubernetes:
+      client:
+        namespace: default
+        # optional: disable configmaps/secrets lookups if you don't use them
+        enabled: true
+        trustCerts: true
+      discovery:
+        all-namespaces: true
+        enabled: true

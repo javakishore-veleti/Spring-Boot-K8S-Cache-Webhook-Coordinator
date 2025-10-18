@@ -19,3 +19,9 @@ kubectl apply -f k8s/deployment.yaml
 
 # Trigger a global cache refresh
 curl -X POST https://my-orders.example.com/clearCache
+```
+
+- In your browser, simply open: -> http://localhost:31579/actuator/health
+- Spring Actuator (health check): -> http://localhost:31579/ -> {"status":"UP"}
+- Inside the cluster →  app listens on port 8080 
+- Outside the cluster → it’s exposed on NodePort 31579
