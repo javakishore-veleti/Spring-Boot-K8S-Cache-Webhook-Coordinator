@@ -9,33 +9,23 @@
     "docker:rm": "docker rm spring-k8s-cache-webhook-coordinator || true",
     "docker:push": "docker push spring-k8s-cache-webhook-coordinator:latest",
 
-    "otel:namespace:apply": "kubectl apply -f devops/k8s/base/namespace.yaml",
-
-    "otel:jaeger:apply": "kubectl apply -f devops/k8s/observability/otel-jaeger.yaml -n observability",
-    "otel:jaeger:delete": "kubectl delete deployment,svc -l app=jaeger -n observability || true",
     "otel:jaeger:status": "kubectl get pods -n observability -l app=jaeger",
     "otel:jaeger:logs": "kubectl logs -n observability -l app=jaeger -f",
-
-    "otel:collector:apply": "kubectl apply -f devops/k8s/observability/otel-collector.yaml -n observability",
-    "otel:collector:delete": "kubectl delete deployment,configmap,svc -l app=otel-collector -n observability || true",
-
-    "otel:verify:services": "kubectl get svc -n observability",
 
     "otel:redeploy:all": "npm run otel:delete:all && npm run otel:deploy:all && npm run otel:verify:pods",
     "otel:delete:all": "kubectl delete -f devops/k8s/observability/otel-collector.yaml --ignore-not-found && kubectl delete -f devops/k8s/observability/otel-jaeger.yaml --ignore-not-found && kubectl delete namespace observability --ignore-not-found",
     "otel:deploy:all": "kubectl apply -f devops/k8s/base/namespace.yaml && kubectl apply -f devops/k8s/observability/otel-jaeger.yaml && kubectl apply -f devops/k8s/observability/otel-collector.yaml",
     "otel:verify:pods": "kubectl get pods -n observability -o wide",
+    "otel:verify:services": "kubectl get svc -n observability",
     "otel:collector:logs": "kubectl logs -n observability -l app=otel-collector -f",
-    "otel:jaeger:ui": "open http://localhost:16686",
     "otel:jaeger:ui-k8s": "bash -c 'PORT=$(kubectl get svc -n observability -l app=jaeger -o jsonpath=\"{.items[0].spec.ports[0].nodePort}\"); echo Jaeger UI: http://localhost:$PORT && open http://localhost:$PORT'",
 
-    "kubectl:local-deploy": "kubectl apply -k devops/k8s/overlays/local",
-    "kubectl:local-delete": "kubectl delete -k devops/k8s/overlays/local || true",
-    "kubectl:local-redeploy": "npm run docker:build && npm run kubectl:local-delete && npm run kubectl:local-deploy",
-    "kubectl:local-info": "kubectl get deployments,pods,service,endpoints",
-    "kubectl:local-pods": "kubectl get pods -l app=spring-k8s-cache-webhook-coordinator",
-    "kubectl:local-svc": "kubectl get svc spring-k8s-cache-webhook-coordinator",
-    "kubectl:local-nodeport": "bash -c 'PORT=$(kubectl get svc local-spring-k8s-cache-webhook-coordinator -o jsonpath=\"{.spec.ports[0].nodePort}\"); echo App URL: http://localhost:$PORT && open http://localhost:$PORT'",
+    "db:apply": "kubectl apply -f devops/k8s/dbs/postgres.yaml",
+    "db:delete": "kubectl delete -f devops/k8s/dbs/postgres.yaml --ignore-not-found",
+    "db:logs": "kubectl logs -n observability -l app=local-postgres -f",
+    "db:status": "kubectl get pods,svc,pvc -n observability -l app=local-postgres",
+    "db:restart": "kubectl rollout restart deployment local-postgres -n observability",
+    "db:verify": "kubectl get pods -n observability -l app=local-postgres -o wide",
 
     "app:apis:test": "bash -c 'PORT=$(kubectl get svc local-spring-k8s-cache-webhook-coordinator -o jsonpath=\"{.spec.ports[0].nodePort}\"); echo Invoking trace on http://localhost:$PORT/trace/test && curl -X GET http://localhost:$PORT/trace/test -v'",
     "app:apis:clearCache": "bash -c 'PORT=$(kubectl get svc local-spring-k8s-cache-webhook-coordinator -o jsonpath=\"{.spec.ports[0].nodePort}\"); echo Invoking trace on http://localhost:$PORT/cache-manager/v1/clearCache && curl -X GET http://localhost:$PORT/cache-manager/v1/clearCache -v'",
@@ -43,8 +33,8 @@
     "app:trace:test:ui": "npm run app:apis:test && npm run otel:jaeger:ui-k8s",
     "kubectl:local-open-ui": "npm run otel:jaeger:ui-k8s",
     "kubectl:local-open-spring-boot-app-url": "bash -c 'PORT=$(kubectl get svc local-spring-k8s-cache-webhook-coordinator -o jsonpath=\"{.spec.ports[0].nodePort}\"); echo Spring Boot App Health: http://localhost:$PORT/actuator/health && open http://localhost:$PORT/actuator/health'",
-    "kubectl:clean:all": "kubectl delete all -l app=spring-k8s-cache-webhook-coordinator --ignore-not-found && kubectl delete namespace observability --ignore-not-found",
-    "kubectl:local-clean-redeploy": "npm run kubectl:clean:all && kubectl delete all,configmap,secret,serviceaccount,clusterrole,clusterrolebinding -l app=spring-k8s-cache-webhook-coordinator --ignore-not-found && kubectl delete -k devops/k8s/overlays/local --ignore-not-found  && npm run docker:stop || true && npm run docker:rm || true  && docker rmi spring-k8s-cache-webhook-coordinator || true && npm run build  && npm run docker:build  && kubectl apply -k devops/k8s/overlays/local && npm run otel:redeploy:all",
-    "kubectl:local-clean-redeploy-open-ui": " npm run kubectl:local-clean-redeploy && echo 'Sleeping for 5 seconds to open Jaeger UI' && sleep 5 && npm run kubectl:local-open-ui && echo 'Sleeping for 15 seconds to open Spring Boot App URL' && sleep 15 && npm run kubectl:local-open-spring-boot-app-url"
+    "kubectl:clean:all": "kubectl delete all -l app=spring-k8s-cache-webhook-coordinator --ignore-not-found && kubectl delete namespace observability --ignore-not-found && npm run db:delete || true",
+    "kubectl:local-clean-redeploy": "npm run kubectl:clean:all && kubectl delete all,configmap,secret,serviceaccount,clusterrole,clusterrolebinding -l app=spring-k8s-cache-webhook-coordinator --ignore-not-found && kubectl delete -k devops/k8s/overlays/local --ignore-not-found  && npm run docker:stop || true && npm run docker:rm || true  && docker rmi spring-k8s-cache-webhook-coordinator || true && npm run build  && npm run docker:build  && kubectl apply -k devops/k8s/overlays/local && npm run otel:redeploy:all && npm run db:apply || true",
+    "kubectl:local-clean-redeploy-open-ui": " npm run kubectl:local-clean-redeploy && echo 'Sleeping for 5 seconds to open Jaeger UI' && sleep 5 && npm run kubectl:local-open-ui && echo 'Sleeping for 20 seconds to open Spring Boot App URL' && sleep 20 && npm run kubectl:local-open-spring-boot-app-url"
   }
 }

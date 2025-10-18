@@ -21,3 +21,8 @@ logging:
     io.micrometer.tracing: DEBUG
     io.opentelemetry: DEBUG
     io.opentelemetry.exporter: DEBUG
+
+otel:
+  java:
+    global-autoconfigure:
+      enabled: true

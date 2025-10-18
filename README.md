@@ -30,6 +30,10 @@ npm run kubectl:local-clean-redeploy-open-ui
 # This invokes the Clear Cache API endpoint - which internally obtains the Kubernetes Pod IPs of this service's other replications
 # and invokes "/cache-manager/v1/clearCacheWebHook" WebHook in the other replicas
 npm run app:apis:clearCache
+
+curl http://localhost:30001/trade-info/crud/get-all-trades
+curl http://localhost:30001/trade-info/crud/create-trade
+
 ```
 
 ## Open Telemetry (Jaeger UI)

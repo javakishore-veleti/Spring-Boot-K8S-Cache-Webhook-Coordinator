@@ -154,6 +154,11 @@
 			<artifactId>opentelemetry-exporter-otlp</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-sdk-extension-autoconfigure</artifactId>
+		</dependency>
+
 		<!-- it provides context propagation for correlation IDs: -->
 		<dependency>
 			<groupId>io.micrometer</groupId>

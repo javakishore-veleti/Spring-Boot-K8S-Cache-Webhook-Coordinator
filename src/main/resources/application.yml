@@ -15,9 +15,20 @@ spring:
       discovery:
         all-namespaces: true
         enabled: true
+    tracing:
+      enabled: true
 
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  health:
+    db:
+      enabled: true  # Enable database health check
+    diskspace:
+      enabled: false  # Optional: Disable diskspace check if not needed
   tracing:
     enabled: true
     sampling:
