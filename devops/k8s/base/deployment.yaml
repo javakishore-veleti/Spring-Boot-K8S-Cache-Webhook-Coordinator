@@ -5,7 +5,7 @@ metadata:
   labels:
     app: spring-k8s-cache-webhook-coordinator
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: spring-k8s-cache-webhook-coordinator

@@ -56,6 +56,7 @@ management:
       endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318/v1/traces}
 
 
+
 logging:
   # Adds trace and span IDs to each log line
   pattern:
@@ -66,3 +67,6 @@ logging:
     io.micrometer.tracing: DEBUG
     io.opentelemetry: DEBUG
     io.opentelemetry.exporter: DEBUG
+    root: INFO
+
+

@@ -5,6 +5,7 @@ import com.jk.ref_impl.cache_webhook.dto.CacheResp;
 import com.jk.ref_impl.cache_webhook.service.CacheManager;
 import com.jk.ref_impl.cache_webhook.service.PodDiscoveryService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,9 @@ import java.util.List;
 @Service
 public class CacheManagerImpl implements CacheManager {
 
-    private CacheManager cacheManager;
+    @Autowired
     private PodDiscoveryService podDiscoveryService;
+
     private final WebClient webClient = WebClient.builder()
             .build();
 
@@ -44,11 +46,11 @@ public class CacheManagerImpl implements CacheManager {
     }
 
     private Mono<String> callWebhook(String ip) {
-        String url = String.format("http://%s:%d/clearCacheWebHook", ip, port);
+        String url = String.format("http://%s:%d/cache-manager/v1/clearCacheWebHook", ip, port);
         log.info("Calling {}", url);
 
         return webClient
-                .method(HttpMethod.POST)
+                .method(HttpMethod.GET)
                 .uri(url)
                 .retrieve()
                 .bodyToMono(String.class)

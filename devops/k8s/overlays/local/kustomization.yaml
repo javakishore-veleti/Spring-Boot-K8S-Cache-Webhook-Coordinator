@@ -13,10 +13,15 @@ patches:
     patch: |
       - op: replace
         path: /spec/replicas
-        value: 2
+        value: 5
       - op: replace
         path: /spec/template/spec/containers/0/image
         value: spring-k8s-cache-webhook-coordinator:latest
       - op: add
         path: /spec/template/spec/serviceAccountName
         value: spring-k8s-cache-webhook-coordinator-sa
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: SPRING_PROFILES_ACTIVE
+          value: local-k8s
