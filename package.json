@@ -4,18 +4,35 @@
   "scripts": {
     "build": "mvn clean install",
     "docker:build": "docker build -t spring-k8s-cache-webhook-coordinator:latest -f dockerBuild/Dockerfile .",
-    "docker:run": "docker run --name spring-k8s-cache-webhook-coordinator -p 8080:8080 spring-k8s-cache-webhook-coordinator:latest ",
-    "docker:stop": "docker stop spring-k8s-cache-webhook-coordinator",
-    "docker:rm": "docker rm spring-k8s-cache-webhook-coordinator",
+    "docker:run": "docker run --name spring-k8s-cache-webhook-coordinator -p 8080:8080 spring-k8s-cache-webhook-coordinator:latest",
+    "docker:stop": "docker stop spring-k8s-cache-webhook-coordinator || true",
+    "docker:rm": "docker rm spring-k8s-cache-webhook-coordinator || true",
     "docker:push": "docker push spring-k8s-cache-webhook-coordinator:latest",
-    "kubectlnpm:local-deploy": "kubectl apply -k  devops/k8s/overlays/local",
-    "kubectl:local-scale-pods": "kubectl scale deployment local-spring-k8s-cache-webhook-coordinator --replicas=5",
+
+    "kubectl:local-deploy": "kubectl apply -k devops/k8s/overlays/local",
+    "kubectl:local-delete": "kubectl delete -k devops/k8s/overlays/local || true",
+    "kubectl:local-redeploy": "npm run docker:build && npm run kubectl:local-delete && npm run kubectl:local-deploy",
     "kubectl:local-info": "kubectl get deployments,pods,service,endpoints",
-    "kubectl:local-svc": "kubectl get svc spring-k8s-cache-webhook-coordinator",
     "kubectl:local-pods": "kubectl get pods -l app=spring-k8s-cache-webhook-coordinator",
-    "kubectl:local-deployments": "kubectl get deployments",
-    "kubectl:local-nodeport": "minikube service local-spring-k8s-cache-webhook-coordinator",
-    "kubectl:local-delete": "kubectl delete -k devops/k8s/overlays/local",
-    "kubectl:local-redeploy": "npm run docker:build && npm run kubectl:local-delete && npm run kubectl:local-deploy"
+    "kubectl:local-svc": "kubectl get svc spring-k8s-cache-webhook-coordinator",
+
+    "otel:namespace:apply": "kubectl apply -f devops/k8s/observability/namespace.yaml",
+
+    "otel:jaeger:apply": "kubectl apply -f devops/k8s/observability/otel-jaeger.yaml -n observability",
+    "otel:jaeger:delete": "kubectl delete deployment,svc -l app=jaeger -n observability || true",
+    "otel:jaeger:status": "kubectl get pods -n observability -l app=jaeger",
+    "otel:jaeger:logs": "kubectl logs -n observability -l app=jaeger -f",
+
+    "otel:collector:apply": "kubectl apply -f devops/k8s/observability/otel-collector.yaml -n observability",
+    "otel:collector:delete": "kubectl delete deployment,configmap,svc -l app=otel-collector -n observability || true",
+
+    "otel:verify:services": "kubectl get svc -n observability",
+
+    "otel:redeploy:all": "npm run otel:delete:all && npm run otel:deploy:all && npm run otel:verify:pods",
+    "otel:delete:all": "kubectl delete -f devops/k8s/observability/otel-collector.yaml --ignore-not-found && kubectl delete -f devops/k8s/observability/otel-jaeger.yaml --ignore-not-found && kubectl delete namespace observability --ignore-not-found",
+    "otel:deploy:all": "kubectl apply -f devops/k8s/observability/namespace.yaml && kubectl apply -f devops/k8s/observability/otel-jaeger.yaml && kubectl apply -f devops/k8s/observability/otel-collector.yaml",
+    "otel:verify:pods": "kubectl get pods -n observability -o wide",
+    "otel:collector:logs": "kubectl logs -n observability -l app=otel-collector -f",
+    "otel:jaeger:ui": "open http://localhost:16686"
   }
 }

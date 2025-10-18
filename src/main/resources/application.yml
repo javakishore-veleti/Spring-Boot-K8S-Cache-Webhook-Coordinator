@@ -11,3 +11,54 @@ spring:
       discovery:
         all-namespaces: true
         enabled: true
+
+
+management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+
+  # Recommended for local learning
+  # Keep both YAMLs ready — start simple with Jaeger-only, then move to Collector mode when you want to test routing or batching.
+  #
+  # We Have Two Possible Topologies:
+  #
+  #  App → Jaeger (direct)
+  #    - This is what you had earlier, when Jaeger’s NodePort (30418)
+  #      was exposed directly (port 4318 inside the pod).
+  #    - Simpler setup
+  #    - No processing, batching, or routing flexibility
+  #
+  #    Example direct config (commented out):
+  #    otlp:
+  #      tracing:
+  #        endpoint: http://localhost:30418/v1/traces
+  #
+  #  App → OTEL Collector → Jaeger
+  #    - This is the *current setup* (recommended)
+  #    - The app sends traces to the OTEL Collector, which then forwards them to Jaeger.
+  #
+  #    - OTEL Collector receives → batches → exports to Jaeger
+  #      (via OTLP HTTP → http://jaeger.observability.svc.cluster.local:4318/v1/traces)
+  #
+  #    - Easier to add new exporters later (Grafana Tempo, Datadog, etc.)
+  #    - Better performance and reliability (buffering, retry)
+  #
+  otlp:
+    tracing:
+      # endpoint: http://localhost:4318/v1/traces   # For local Docker-based Collector
+      # endpoint: http://otel-collector.observability.svc.cluster.local:4318/v1/traces   # For Kubernetes-based Collector
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318/v1/traces}
+
+
+logging:
+  # Adds trace and span IDs to each log line
+  pattern:
+    level: "%5p [${spring.application.name:},trace_id=%X{traceId:-},span_id=%X{spanId:-}]"
+
+  # Enable detailed tracing logs for observability debugging
+  level:
+    io.micrometer.tracing: DEBUG
+    io.opentelemetry: DEBUG
+    io.opentelemetry.exporter: DEBUG
