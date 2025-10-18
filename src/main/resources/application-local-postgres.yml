@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres.observability.svc.cluster.local:5432/springdb
+    username: springuser
+    password: springpass
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

@@ -46,4 +46,6 @@ should clear cache in all other replicas of this deployment.
 
 If we use Kafka or Azure EventHub then it will be heavy tech stack (Kafka brokers/servers, Kafka client programming, Topic creeation, publishing topic etc)
 
-The main purpose of this Spring Boot App is WebHook show case, as part of that it also show cases Kubernetes pods and OpenTelemry capabilities that shoudl be integrated as part of this Spring Boot applicaiton.
+The main purpose of this Spring Boot App is WebHook showcase, as part of that it also show cases Kubernetes pods and OpenTelemry capabilities that shoudl be integrated as part of this Spring Boot applicaiton.
+
+Since in devops/k8s/overlays/local/kustomization.yaml file we have 5 pods defined, you should see 5 Traces with the webhook endpoint "/cache-manager/v1/clearCacheWebHook" in Jaeger UI. 

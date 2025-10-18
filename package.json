@@ -9,7 +9,7 @@
     "docker:rm": "docker rm spring-k8s-cache-webhook-coordinator || true",
     "docker:push": "docker push spring-k8s-cache-webhook-coordinator:latest",
 
-    "otel:namespace:apply": "kubectl apply -f devops/k8s/observability/namespace.yaml",
+    "otel:namespace:apply": "kubectl apply -f devops/k8s/base/namespace.yaml",
 
     "otel:jaeger:apply": "kubectl apply -f devops/k8s/observability/otel-jaeger.yaml -n observability",
     "otel:jaeger:delete": "kubectl delete deployment,svc -l app=jaeger -n observability || true",
@@ -23,7 +23,7 @@
 
     "otel:redeploy:all": "npm run otel:delete:all && npm run otel:deploy:all && npm run otel:verify:pods",
     "otel:delete:all": "kubectl delete -f devops/k8s/observability/otel-collector.yaml --ignore-not-found && kubectl delete -f devops/k8s/observability/otel-jaeger.yaml --ignore-not-found && kubectl delete namespace observability --ignore-not-found",
-    "otel:deploy:all": "kubectl apply -f devops/k8s/observability/namespace.yaml && kubectl apply -f devops/k8s/observability/otel-jaeger.yaml && kubectl apply -f devops/k8s/observability/otel-collector.yaml",
+    "otel:deploy:all": "kubectl apply -f devops/k8s/base/namespace.yaml && kubectl apply -f devops/k8s/observability/otel-jaeger.yaml && kubectl apply -f devops/k8s/observability/otel-collector.yaml",
     "otel:verify:pods": "kubectl get pods -n observability -o wide",
     "otel:collector:logs": "kubectl logs -n observability -l app=otel-collector -f",
     "otel:jaeger:ui": "open http://localhost:16686",
