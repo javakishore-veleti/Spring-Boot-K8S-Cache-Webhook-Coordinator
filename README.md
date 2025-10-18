@@ -34,3 +34,16 @@ npm run app:apis:clearCache
 
 ## Open Telemetry (Jaeger UI)
 When the above commands open the Jaeger UI you will find the Traces, Spans of this application in the Jaeger Application
+
+In Jaeger, if you find below it indicates your API call through "npm run app:apis:clearCache" is invoked
+"spring-k8s-cache-webhook-coordinator: http get /cache-manager/v1/clearCache 22c9508"
+
+In Jaeger, if you find below it indicates your above API call internally identified all the Kubernetes Replicas of this Spring Boot Application and invokes  
+"http get /cache-manager/v1/clearCacheWebHook" on each of the replica.
+
+The purpose of the above "clearCacheWebHook" is to show case the WebHook real use when an application caches the data and clear cache event when perfoermed by application teams 
+should clear cache in all other replicas of this deployment. 
+
+If we use Kafka or Azure EventHub then it will be heavy tech stack (Kafka brokers/servers, Kafka client programming, Topic creeation, publishing topic etc)
+
+The main purpose of this Spring Boot App is WebHook show case, as part of that it also show cases Kubernetes pods and OpenTelemry capabilities that shoudl be integrated as part of this Spring Boot applicaiton.
