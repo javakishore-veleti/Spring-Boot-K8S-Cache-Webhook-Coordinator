@@ -31,9 +31,15 @@ npm run kubectl:local-clean-redeploy-open-ui
 # and invokes "/cache-manager/v1/clearCacheWebHook" WebHook in the other replicas
 npm run app:apis:clearCache
 
+curl http://localhost:30001/actuator/health
 curl http://localhost:30001/trade-info/crud/get-all-trades
 curl http://localhost:30001/trade-info/crud/create-trade
+curl http://localhost:30001/trade-info/crud/get-all-trades
+curl http://localhost:31686/search # Jaeger UI
+# Port number for above Jaeger UI can change based on the Kubernetes deployment in this codebase
 
+# Below delete all the pods in this codebase
+npm run kubectl:clean:all
 ```
 
 ## Open Telemetry (Jaeger UI)
