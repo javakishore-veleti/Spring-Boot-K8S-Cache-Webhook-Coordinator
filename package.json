@@ -9,13 +9,6 @@
     "docker:rm": "docker rm spring-k8s-cache-webhook-coordinator || true",
     "docker:push": "docker push spring-k8s-cache-webhook-coordinator:latest",
 
-    "kubectl:local-deploy": "kubectl apply -k devops/k8s/overlays/local",
-    "kubectl:local-delete": "kubectl delete -k devops/k8s/overlays/local || true",
-    "kubectl:local-redeploy": "npm run docker:build && npm run kubectl:local-delete && npm run kubectl:local-deploy",
-    "kubectl:local-info": "kubectl get deployments,pods,service,endpoints",
-    "kubectl:local-pods": "kubectl get pods -l app=spring-k8s-cache-webhook-coordinator",
-    "kubectl:local-svc": "kubectl get svc spring-k8s-cache-webhook-coordinator",
-
     "otel:namespace:apply": "kubectl apply -f devops/k8s/observability/namespace.yaml",
 
     "otel:jaeger:apply": "kubectl apply -f devops/k8s/observability/otel-jaeger.yaml -n observability",
@@ -33,6 +26,24 @@
     "otel:deploy:all": "kubectl apply -f devops/k8s/observability/namespace.yaml && kubectl apply -f devops/k8s/observability/otel-jaeger.yaml && kubectl apply -f devops/k8s/observability/otel-collector.yaml",
     "otel:verify:pods": "kubectl get pods -n observability -o wide",
     "otel:collector:logs": "kubectl logs -n observability -l app=otel-collector -f",
-    "otel:jaeger:ui": "open http://localhost:16686"
+    "otel:jaeger:ui": "open http://localhost:16686",
+    "otel:jaeger:ui-k8s": "bash -c 'PORT=$(kubectl get svc -n observability -l app=jaeger -o jsonpath=\"{.items[0].spec.ports[0].nodePort}\"); echo Jaeger UI: http://localhost:$PORT && open http://localhost:$PORT'",
+
+
+
+    "kubectl:local-deploy": "kubectl apply -k devops/k8s/overlays/local",
+    "kubectl:local-delete": "kubectl delete -k devops/k8s/overlays/local || true",
+    "kubectl:local-redeploy": "npm run docker:build && npm run kubectl:local-delete && npm run kubectl:local-deploy",
+    "kubectl:local-info": "kubectl get deployments,pods,service,endpoints",
+    "kubectl:local-pods": "kubectl get pods -l app=spring-k8s-cache-webhook-coordinator",
+    "kubectl:local-svc": "kubectl get svc spring-k8s-cache-webhook-coordinator",
+    "kubectl:local-nodeport": "bash -c 'PORT=$(kubectl get svc local-spring-k8s-cache-webhook-coordinator -o jsonpath=\"{.spec.ports[0].nodePort}\"); echo App URL: http://localhost:$PORT && open http://localhost:$PORT'",
+
+    "kubectl:clean:all": "kubectl delete all -l app=spring-k8s-cache-webhook-coordinator --ignore-not-found && kubectl delete namespace observability --ignore-not-found",
+    "kubectl:local-clean-redeploy": "kubectl delete all,configmap,secret,serviceaccount,clusterrole,clusterrolebinding -l app=spring-k8s-cache-webhook-coordinator --ignore-not-found && kubectl delete -k devops/k8s/overlays/local --ignore-not-found && npm run docker:build && kubectl apply -k devops/k8s/overlays/local",
+
+    "app:apis:test": "bash -c 'PORT=$(kubectl get svc local-spring-k8s-cache-webhook-coordinator -o jsonpath=\"{.spec.ports[0].nodePort}\"); echo Invoking trace on http://localhost:$PORT/trace/test && curl -X GET http://localhost:$PORT/trace/test -v'",
+    "app:trace:test:ui": "npm run app:apis:test && npm run otel:jaeger:ui-k8s"
+
   }
 }

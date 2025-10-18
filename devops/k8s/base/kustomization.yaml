@@ -1,3 +1,7 @@
 resources:
   - deployment.yaml
   - service.yaml
+  - rbac.yaml
+
+commonLabels:
+  app: spring-k8s-cache-webhook-coordinator

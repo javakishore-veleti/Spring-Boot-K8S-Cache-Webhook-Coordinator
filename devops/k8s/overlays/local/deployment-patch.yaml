@@ -1,0 +1,8 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-k8s-cache-webhook-coordinator
+spec:
+  template:
+    spec:
+      serviceAccountName: spring-k8s-cache-webhook-coordinator-sa

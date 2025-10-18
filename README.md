@@ -139,3 +139,21 @@ kubectl logs -n observability -l app=otel-collector --previous
 
 
 ```
+
+## Clean Everything And ReDeploy This App Local K8S
+
+```shell
+# Clean everything and rebuild app + observability stack
+npm run kubectl:local-clean-redeploy
+npm run otel:clean-redeploy:all
+
+# Verify pods
+npm run otel:verify:pods
+
+# Access app
+npm run kubectl:local-nodeport
+
+# Access Jaeger UI
+npm run otel:jaeger:ui-k8s
+
+```

@@ -19,9 +19,9 @@ spec:
         - name: jaeger
           image: jaegertracing/all-in-one:1.57
           ports:
-            - containerPort: 16686
-            - containerPort: 4317
-            - containerPort: 4318
+            - containerPort: 16686  # Jaeger UI
+            - containerPort: 4317   # OTLP gRPC
+            - containerPort: 4318   # OTLP HTTP
           env:
             - name: COLLECTOR_OTLP_ENABLED
               value: "true"
@@ -31,17 +31,20 @@ kind: Service
 metadata:
   name: jaeger
   namespace: observability
+  labels:
+    app: jaeger
 spec:
   selector:
     app: jaeger
+  type: NodePort
   ports:
     - name: ui
       port: 16686
       targetPort: 16686
+      nodePort: 31686        # Expose Jaeger UI at http://localhost:31686
     - name: otlp-grpc
       port: 4317
       targetPort: 4317
     - name: otlp-http
       port: 4318
       targetPort: 4318
-  type: ClusterIP

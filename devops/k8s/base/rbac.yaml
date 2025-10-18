@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spring-k8s-cache-webhook-coordinator-sa
+  labels:
+    app: spring-k8s-cache-webhook-coordinator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: spring-k8s-cache-webhook-coordinator-role
+  labels:
+    app: spring-k8s-cache-webhook-coordinator
+rules:
+  - apiGroups: [""]
+    resources: ["services", "endpoints", "pods"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: spring-k8s-cache-webhook-coordinator-binding
+  labels:
+    app: spring-k8s-cache-webhook-coordinator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: spring-k8s-cache-webhook-coordinator-role
+subjects:
+  - kind: ServiceAccount
+    name: spring-k8s-cache-webhook-coordinator-sa
+    namespace: default

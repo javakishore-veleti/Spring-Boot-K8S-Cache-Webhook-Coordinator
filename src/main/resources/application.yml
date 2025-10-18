@@ -1,3 +1,7 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+
 spring:
   application:
     name: spring-k8s-cache-webhook-coordinator
